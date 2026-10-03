@@ -1,0 +1,308 @@
+{
+  "name": "vscode-full-featured-hub",
+  "displayName": "HUD",
+  "description": "ONE extensible HUD card in the bottom panel that hosts many panels in a free column grid. Subscription quota (OpenCode GO, DeepSeek, GLM, Kimi, Grok, MiMo, OpenRouter, SiliconFlow, Qwen Token Plan, Command Code, custom JSON endpoints, in-card credential drawer, 30-day usage chart), GitHub activity, to-do list, weather, parcel tracking, stock/bond/futures markets with today's gainers/losers board and a hover intraday K-line chart, and a rightmost card that is either a read-only SQL client (PostgreSQL, MySQL, SQL Server, Oracle, DB2, SQLite) or an interactive SSH terminal with a real PTY. Every panel keeps its own polling, so all of them stay live at the same time.",
+  "version": "2.1.0",
+  "publisher": "dsh-hud",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "keywords": [
+    "hud",
+    "panel",
+    "quota",
+    "usage",
+    "limits",
+    "opencode",
+    "deepseek",
+    "qwen",
+    "token-plan",
+    "kimi",
+    "grok",
+    "mimo",
+    "command-code",
+    "openrouter",
+    "siliconflow",
+    "github",
+    "releases",
+    "issues",
+    "todo",
+    "weather",
+    "parcel",
+    "market",
+    "stocks",
+    "candlestick",
+    "sql",
+    "database",
+    "postgresql",
+    "sql-server",
+    "mysql",
+    "oracle",
+    "sqlite",
+    "ssh",
+    "terminal",
+    "remote",
+    "dashboard",
+    "status-bar"
+  ],
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "extensionKind": [
+    "ui"
+  ],
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "hud",
+          "title": "HUD",
+          "icon": "media/panel-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "hud": [
+        {
+          "id": "hud.card",
+          "name": "HUD",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "hud.show",
+        "title": "Show HUD",
+        "category": "HUD"
+      },
+      {
+        "command": "hud.reload",
+        "title": "Reload HUD",
+        "category": "HUD"
+      },
+      {
+        "command": "hud.setCredential",
+        "title": "Set Credential…",
+        "category": "HUD"
+      },
+      {
+        "command": "hud.openCredentialsFile",
+        "title": "Open Credentials File",
+        "category": "HUD"
+      },
+      {
+        "command": "hud.rightCard",
+        "title": "Right Card: Database / SSH…",
+        "category": "HUD"
+      },
+      {
+        "command": "hud.sshHosts",
+        "title": "Manage SSH Hosts…",
+        "category": "HUD"
+      },
+      {
+        "command": "hud.sqlConnections",
+        "title": "Manage SQL Connections…",
+        "category": "HUD"
+      },
+      {
+        "command": "hud.quotaPlatforms",
+        "title": "Choose Quota Platforms…",
+        "category": "HUD"
+      },
+      {
+        "command": "hud.quotaReset",
+        "title": "Reset Quota Platforms",
+        "category": "HUD"
+      },
+      {
+        "command": "hud.openSettings",
+        "title": "Open Panel Settings",
+        "category": "HUD"
+      },
+      {
+        "command": "hud.resetLayout",
+        "title": "Reset Card Layout",
+        "category": "HUD"
+      },
+      {
+        "command": "hud.diagnostics",
+        "title": "Show Diagnostics",
+        "category": "HUD"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "hud.reload",
+          "when": "view == hud.card",
+          "group": "navigation@1"
+        },
+        {
+          "command": "hud.setCredential",
+          "when": "view == hud.card",
+          "group": "navigation@2"
+        },
+        {
+          "command": "hud.quotaPlatforms",
+          "when": "view == hud.card",
+          "group": "navigation@3"
+        },
+        {
+          "command": "hud.sqlConnections",
+          "when": "view == hud.card",
+          "group": "navigation@5"
+        },
+        {
+          "command": "hud.sshHosts",
+          "when": "view == hud.card",
+          "group": "navigation@6"
+        },
+        {
+          "command": "hud.rightCard",
+          "when": "view == hud.card",
+          "group": "navigation@0"
+        },
+        {
+          "command": "hud.openSettings",
+          "when": "view == hud.card",
+          "group": "navigation@4"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "HUD",
+      "properties": {
+        "hud.panels": {
+          "type": "object",
+          "default": {},
+          "markdownDescription": "Per-panel settings, keyed by panel id — the same object DeepSeek Harness keeps under `panels:` in the plugin config, so a block can be copied between the two verbatim. Known ids: `quota`, `github`, `todo`, `weather`, `parcel`, `market`, `futures`, `bond`, `sql`.\n\nExample:\n```json\n{\n  \"quota\": { \"pollMs\": 60000, \"apiKeyEnv\": \"OPENCODE_GO_API_KEY\" },\n  \"github\": { \"perRepoLimit\": 30 },\n  \"sql\": { \"timeoutMs\": 15000 }\n}\n```\n\nEvery panel reads its slice on each poll, so an edit applies within one refresh. Values the card itself lets you change (a SQL connection, the market watch list) live in the panel's own storage under `$DSH_HOME/storages/`, and win over this block — exactly as in DSH. See the bundled `hud/README.md` for every field.",
+          "additionalProperties": {
+            "type": "object"
+          }
+        },
+        "hud.retainContext": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Keep the HUD running while its panel tab is hidden. Off by default: a hidden webview is destroyed, so every panel stops polling and starts again when you come back. Turn it on if you want background panels (the GitHub unread badge, the to-do reminders) to keep updating while the tab is closed."
+        },
+        "hud.notifications": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Let the to-do panel's reminders reach VS Code notifications. The card uses the browser Notification API, which a webview cannot grant; with this on, those calls are forwarded to `vscode.window.showInformationMessage` instead."
+        },
+        "hud.credentialsFile": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Override the credentials document path. Empty = `$DSH_HOME/.credentials.yaml` (with `$DSH_HOME` falling back to `~/.dsh`) — the same document DeepSeek Harness manages, so both tools share one credential set."
+        },
+        "hud.credentialStore": {
+          "type": "string",
+          "default": "dsh",
+          "enum": [
+            "dsh",
+            "vscode",
+            "both"
+          ],
+          "enumDescriptions": [
+            "Write to $DSH_HOME/.credentials.yaml — the file DeepSeek Harness also manages.",
+            "Write to VS Code secret storage (never touches the filesystem).",
+            "Write to both."
+          ],
+          "markdownDescription": "Where a secret pasted into a card's credential drawer is saved. Reads always check the process environment, then `$DSH_HOME/.credentials.yaml`, then VS Code secret storage, then `<workspace>/.env`, then `$DSH_HOME/.env` — the layering DeepSeek Harness uses."
+        },
+        "hud.statusBar": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Also show the worst quota window percentage in the status bar."
+        },
+        "hud.dshProfile": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Which DeepSeek Harness profile to read the plugin configuration from (`$DSH_HOME/profiles/<name>/cordis.patch.yml`). Empty = the most recently edited one.\n\nThe quota card discovers the platforms it can show from the `llm-pi-ai` plugin's provider table, which lives in that profile layer — so this is what decides whether `Account balance` offers one platform or all of them."
+        },
+        "hud.language": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "zh",
+            "en"
+          ],
+          "enumDescriptions": [
+            "The DSH profile's locale preference, falling back to the VS Code display language.",
+            "Always Chinese.",
+            "Always English."
+          ],
+          "markdownDescription": "Which language the card renders in.\n\nThe card decides by reading the document's `lang`, which in DeepSeek Harness is set by the locale plugin — so `auto` follows the same `locale.preference` your DSH profile uses, and the HUD reads the same in both tools. The VS Code display language is only the fallback, since a HUD is not the editor chrome.\n\nChanging this re-creates the card."
+        },
+        "hud.quotaDiscovery": {
+          "type": "string",
+          "default": "chosen",
+          "enum": [
+            "chosen",
+            "auto"
+          ],
+          "enumDescriptions": [
+            "Show exactly the platforms in `hud.panels.quota.subscriptions`. Run “HUD: Choose Quota Platforms…” to pick them.",
+            "DeepSeek Harness' behaviour: the DSH profile's provider table, the built-in discovery, and the explicit list on top."
+          ],
+          "markdownDescription": "How the quota card decides which platforms exist.\n\nThe panel discovers some rows by itself — the built-in DeepSeek source appears whenever `DEEPSEEK_API_KEY` is set, and the `llm-pi-ai` provider table in your DSH profile contributes others — with no field that removes a row once found. `chosen` therefore gates both: it shows exactly what you picked and keeps the credentials of everything else from the panels. `auto` restores DSH's own behaviour.\n\n“HUD: Choose Quota Platforms…” turns this on; “HUD: Reset Quota Platforms” turns it back to `auto`."
+        },
+        "hud.rightCard": {
+          "type": "string",
+          "default": "database",
+          "enum": [
+            "database",
+            "ssh"
+          ],
+          "enumDescriptions": [
+            "The SQL card: database connections, a schema tree and a statement editor.",
+            "An interactive SSH terminal: real PTY, real shells — vim and top included — in the same slot."
+          ],
+          "markdownDescription": "What the rightmost card is.\n\nThe two are one slot, not two cards: both are a connection to something remote, and a second card would compete for the same columns. Switching REPLACES the other — the SQL card is not merely hidden, it is not in the grid at all, so there is no half-state where both are reachable.\n\nChanging this re-creates the card, like `hud.language`. Run “HUD: Right Card: Database / SSH…” or click the switch in the HUD panel's title bar."
+        },
+        "hud.sshStrictHostKey": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Refuse an SSH host whose key does not match the fingerprint recorded the first time.\n\nOff by default, because a self-signed key on a box you built yourself is the normal case and a wall the user cannot get past is worse than the risk it prevents. The fingerprint is recorded either way and shown in the card, so “not verified” is something you can see rather than something you have to trust."
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "ssh2": "^1.17.0",
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.0.0",
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/xterm": "^6.0.0",
+    "esbuild": "^0.24.0",
+    "jsdom": "^26.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "scripts": {
+    "vendor:react": "node tools/bundle-react.mjs",
+    "vendor:xterm": "node tools/bundle-xterm.mjs",
+    "vendor:theme": "node tools/gen-theme.mjs",
+    "vendor": "npm run vendor:react && npm run vendor:xterm && npm run vendor:theme",
+    "hud:sync": "node tools/sync-hud.mjs",
+    "hud:vendor": "node hud/tools/extract-vendor.mjs",
+    "hud:test": "node hud/tools/build-client.mjs --check && node hud/tools/test-config.mjs && node hud/tools/test-host.mjs && node hud/tools/test-client.mjs",
+    "check:verbatim": "node tools/check-verbatim.mjs",
+    "refs": "node tools/list-credential-refs.mjs",
+    "test": "node --test --test-timeout=60000 \"test/*.test.js\"",
+    "verify": "npm run check:verbatim && npm run hud:test && npm test",
+    "package": "vsce package"
+  }
+}

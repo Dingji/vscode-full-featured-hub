@@ -1,0 +1,10 @@
+# Development-only artifacts (nothing here is published: package.json#files
+# whitelists what ships).
+tools/node_modules/
+tools/package-lock.json
+tools/vendor/
+
+# A generated bundle IS committed on purpose — `client.js` is the artifact the
+# DSH shell loads, and shipping the sources without it would break an install
+# that skips the build step. `node tools/build-client.mjs --check` keeps it
+# honest in CI.

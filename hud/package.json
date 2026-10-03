@@ -1,0 +1,71 @@
+{
+  "name": "@dingji_cherubino/dsh-full-featured-hub",
+  "version": "2.1.0",
+  "description": "DeepSeek Harness (DSH) plugin: ONE extensible HUD card above the composer that hosts many panels behind a tab strip. Ships with two: subscription quota (OpenCode GO, DeepSeek, GLM, Kimi, Grok, MiMo, OpenRouter, SiliconFlow, Qwen Token Plan, Command Code, custom JSON endpoints, in-card credential drawer, 30-day usage chart) and GitHub activity (device-flow sign-in, your own repos, releases/pushes/branches/merges/issues). Every panel keeps its own host routes and its own polling, so all of them stay live at the same time; adding a panel is one file plus one registry line.",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "hud",
+    "panel",
+    "quota",
+    "usage",
+    "limits",
+    "opencode",
+    "deepseek",
+    "qwen",
+    "token-plan",
+    "kimi",
+    "grok",
+    "mimo",
+    "command-code",
+    "openrouter",
+    "siliconflow",
+    "github",
+    "releases",
+    "issues",
+    "feed"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "lib",
+    "panels",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": ">=0.2.0-rc.0 <0.3.0",
+    "@deepseek-ai/schemastery": "^3.18.4"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "prepack": "node tools/build-client.mjs",
+    "prepublishOnly": "npm test",
+    "rename": "node tools/rename-package.mjs",
+    "test": "node tools/test-host.mjs && node tools/test-client.mjs && node tools/test-config.mjs && node tools/check-utf8.mjs && node tools/check-jsx.mjs && node tools/check-tdz.mjs && node tools/build-client.mjs --check"
+  }
+}

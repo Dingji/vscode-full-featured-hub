@@ -1,0 +1,11 @@
+# @dingji_cherubino/dsh-full-featured-hub bundle patch: inserts the plugin row into the profile roster.
+#
+# ONE row mounts the whole HUD — the host half (every panel's same-origin
+# routes, plus the shared credential store) and the browser half (the tabbed
+# card, via the `dsh.client` declaration in package.json).
+#
+# `name` MUST be the resolvable package name (npm name, git URL, or the name
+# pnpm links into the profile), or startup aborts with `Cannot find package`.
+- insert:
+    - id: hud
+      name: '@dingji_cherubino/dsh-full-featured-hub'

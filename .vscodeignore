@@ -1,0 +1,26 @@
+# Excluded from the .vsix.
+#
+# The card needs: src/ (the VS Code wiring), media/ (React + the runtime shim +
+# the theme), and the parts of hud/ that the extension host imports or the
+# webview loads — index.js, client.js, package.json, lib/ and every
+# panels/<id>/host.js.
+#
+# Not needed at runtime, and each is large:
+#   hud/client/            the bundle's FRAGMENTS (client.js is the built result)
+#   hud/panels/*/client.js the same fragments, one per panel
+#   hud/tools/             the vendor's test suite
+#   test/, tools/          this port's own suites and build scripts
+.vscode/**
+.gitignore
+.git/**
+test/**
+tools/**
+hud/tools/**
+hud/client/**
+hud/panels/*/client.js
+hud/panels/*/*.md
+hud/*.tgz
+node_modules/.cache/**
+package-lock.json
+*.vsix
+*.log

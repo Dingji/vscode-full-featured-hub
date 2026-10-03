@@ -1,0 +1,25 @@
+{
+  "name": "dsh-hud-tools",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Development-only harness for dsh-hud: real React + a real DOM so the browser half can be mounted headlessly, and a mock cordis context for the host half. Never published (tools/ is outside package.json#files).",
+  "scripts": {
+    "install-deps": "npm install",
+    "vendor": "node extract-vendor.mjs",
+    "build": "node build-client.mjs",
+    "test": "node build-client.mjs --check && node check-utf8.mjs && node check-jsx.mjs && node check-tdz.mjs && node test-config.mjs && node test-host.mjs && node test-client.mjs",
+    "test:config": "node test-config.mjs",
+    "test:host": "node test-host.mjs",
+    "test:client": "node test-client.mjs",
+    "test:utf8": "node check-utf8.mjs",
+    "test:jsx": "node check-jsx.mjs",
+    "test:tdz": "node check-tdz.mjs",
+    "live": "node live-check.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
