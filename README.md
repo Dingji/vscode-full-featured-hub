@@ -583,9 +583,11 @@ code --list-extensions --show-versions | Select-String hud
 
 ---
 
-**仓库里的相关文件**（这一节故意不写成链接：在 `package.json` 补上 `repository` 之前，`vsce` 会因为相对链接无法改写而**拒绝打包**，而不是警告）：
+**仓库里的相关文件**：
 
-- **`PUBLISHING.md`** —— 发布到商城 / Open VSX 的完整流程：前置条件、publisher 与 PAT、发布命令、发布后验证、以及本仓库特有的坑
-- **`CHANGELOG.md`** —— 每个版本改了什么（也是商城的 changelog 页签）
-- **`THIRD-PARTY-NOTICES.md`** —— 分发的全部第三方代码及其完整许可
-- **`hud/README.md`** —— **上游插件自己的文档**：每个面板的原始设计说明
+- **[PUBLISHING.md](PUBLISHING.md)** —— 发布到商城 / Open VSX 的完整流程：前置条件、publisher 与 PAT、发布命令、发布后验证、以及本仓库特有的坑
+- **[CHANGELOG.md](CHANGELOG.md)** —— 每个版本改了什么（也是商城的 changelog 页签）
+- **[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)** —— 分发的全部第三方代码及其完整许可
+- **[hud/README.md](hud/README.md)** —— **上游插件自己的文档**：每个面板的原始设计说明
+
+> 这些是相对链接，而它们能存在是因为 `package.json` 里有 `repository`：`vsce` 会用仓库地址把它们改写成绝对 URL。**没有那个字段时，README 里任何一个相对链接都会让 `vsce package` 直接失败**（`ERROR Couldn't detect the repository … will be broken`），而且**一个 `.vsix` 都不会产出** —— 实测过，那不是警告。

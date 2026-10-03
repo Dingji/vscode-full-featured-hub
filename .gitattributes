@@ -1,0 +1,36 @@
+# ── line endings ───────────────────────────────────────────────────────────
+#
+# This is not cosmetic here, it is a CORRECTNESS setting.
+#
+# `hud/` is the upstream plugin shipped byte for byte, and `npm run check:verbatim`
+# proves it by comparing sha256 hashes. With `core.autocrlf=true` (the Windows
+# default in many installs) git rewrites every LF to CRLF on checkout, so a fresh
+# clone FAILS the check with every vendored file reported as modified — and
+# `npm run verify`, which is the release gate, fails with it.
+#
+# `eol=lf` pins the working tree to LF, so a checkout is byte-identical to what was
+# committed no matter what the machine's autocrlf happens to be. Measured, not
+# assumed: a checkout with autocrlf=true reported 65 of the 67 vendored files as
+# changed, and every one of them was a CRLF difference.
+* text=auto eol=lf
+
+# ── binary ─────────────────────────────────────────────────────────────────
+*.png binary
+*.vsix binary
+*.tgz binary
+*.ico binary
+
+# ── keep the vendored tree out of the language stats ───────────────────────
+# It is somebody else's code, and without this GitHub reports this repository as
+# mostly JavaScript that this project did not write.
+hud/** linguist-vendored
+node_modules/** linguist-vendored
+media/react.js linguist-vendored
+media/xterm.js linguist-vendored
+
+# ── diffs worth reading ────────────────────────────────────────────────────
+# The bundles and the vendored browser half are one long line each; a text diff of
+# them is noise, and marking them generated keeps them out of the diff stat.
+media/react.js -diff
+media/xterm.js -diff
+hud/client.js -diff
