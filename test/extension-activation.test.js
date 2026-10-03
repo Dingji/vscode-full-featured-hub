@@ -160,6 +160,65 @@ test('the HUD tree ships as its own module package, unmodified', () => {
   }
 })
 
+test('every install command in the docs names the extension this manifest declares', () => {
+  // The Marketplace ID is `<publisher>.<name>`, and this repository has changed it
+  // twice. Each change silently invalidated the install line in the docs — which is
+  // the one line a reader copies — so the rule is checked instead of remembered.
+  // An INSTALL line must name either the current ID or a .vsix; the old IDs may
+  // still appear in `--uninstall-extension` lines, which is where they belong.
+  const id = `${MANIFEST.publisher}.${MANIFEST.name}`
+  for (const file of ['README.md', 'PUBLISHING.md', 'CHANGELOG.md']) {
+    const text = readFileSync(join(ROOT, file), 'utf8')
+    const installs = [...text.matchAll(/code --install-extension (\S+)/g)].map((match) => match[1])
+    // The changelog talks about removing an old extension, not installing one.
+    if (file !== 'CHANGELOG.md') assert.ok(installs.length > 0, `${file} should document how to install`)
+    for (const target of installs) {
+      const ok = target === id || target.endsWith('.vsix')
+      assert.ok(ok, `${file} tells the reader to install "${target}", which is neither ${id} nor a .vsix`)
+    }
+  }
+  // And the uninstall notes must name the IDs that actually existed, or they send
+  // someone hunting for an extension that was never installed.
+  const publishing = readFileSync(join(ROOT, 'PUBLISHING.md'), 'utf8')
+  for (const retired of ['dsh-hud.dsh-hud', 'dsh-hud.vscode-full-featured-hub']) {
+    assert.ok(publishing.includes(retired), `PUBLISHING.md should still say how to remove ${retired}`)
+  }
+
+  // The README's title IS the listing title on the Marketplace page, so the two must
+  // not drift: `displayName` is displayed directly above the README, and seeing two
+  // different names is how a reader stops trusting the page. It also has to be
+  // specific — a bare generic word is rejected by the Marketplace as already taken.
+  const heading = readFileSync(join(ROOT, 'README.md'), 'utf8').match(/^# (.+)$/m)
+  assert.ok(heading, 'README.md needs a top-level heading')
+  assert.equal(heading[1].trim(), MANIFEST.displayName, 'the README title must be the listing title')
+  assert.ok(MANIFEST.displayName.trim().length >= 8, 'a display name this short is almost certainly taken')
+})
+
+test('publish.ps1 stays runnable by Windows PowerShell 5.1, and verifies before it publishes', () => {
+  const file = join(ROOT, 'publish.ps1')
+  if (!existsSync(file)) return
+  // The BOM is not cosmetic. This script's messages are Chinese, and Windows
+  // PowerShell reads a .ps1 WITHOUT a BOM as ANSI: the parser then fails with
+  // "unexpected }" pointing at lines that contain no brace at all, and the release
+  // script cannot run. An editor that rewrites the file can silently drop the BOM,
+  // which is exactly why it is asserted here rather than remembered.
+  const bytes = readFileSync(file)
+  assert.deepEqual(
+    [...bytes.subarray(0, 3)],
+    [0xef, 0xbb, 0xbf],
+    'publish.ps1 must start with a UTF-8 BOM or 5.1 cannot parse it',
+  )
+  const text = bytes.toString('utf8')
+  assert.match(text, /VSCE_PAT/, 'a token must be acceptable from the environment, for CI')
+  assert.match(text, /Read-Host -AsSecureString/, 'and prompted for when there is no CI')
+  // Order matters: a publish attempt with a bad token is a wasted round trip and a
+  // confusing error, while verify-pat says exactly what is wrong.
+  const verify = text.indexOf('verify-pat')
+  const publish = text.indexOf('publish --packagePath')
+  assert.ok(verify > 0 && publish > 0, 'the script must both verify and publish')
+  assert.ok(verify < publish, 'verify-pat must come before the publish call')
+})
+
 // ── activation ─────────────────────────────────────────────────────────────
 test('activation registers the view provider and every command', (t) => {
   const app = boot()

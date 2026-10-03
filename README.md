@@ -1,16 +1,18 @@
-# HUD — vscode-full-featured-hub
+# Full Featured Hub
 
 **一张卡片，一个自由列网格，里面住着九个面板 —— 每个面板有自己的路由、自己的轮询，所以它们同时都是活的。**
 
-这是 DeepSeek Harness 插件 `@dingji_cherubino/dsh-full-featured-hub` 的 **VS Code 移植版**。卡片**本身就是原插件**：`hud/client.js` 一字未改地跑在 webview 里，宿主半区（`hud/index.js` + `hud/lib/` + 九个 `hud/panels/*/host.js`）**逐字节复制**进扩展。扩展 id `dsh-hud.vscode-full-featured-hub`，版本跟着上游走。
+这是 DeepSeek Harness 插件 `@dingji_cherubino/dsh-full-featured-hub` 的 **VS Code 移植版**。卡片**本身就是原插件**：`hud/client.js` 一字未改地跑在 webview 里，宿主半区（`hud/index.js` + `hud/lib/` + 九个 `hud/panels/*/host.js`）**逐字节复制**进扩展。版本跟着上游走。
 
 | | |
 |---|---|
-| **扩展 id** | `dsh-hud.vscode-full-featured-hub` |
+| **商城列表名** | `Full Featured Hub`（= `package.json#displayName`，也就是本页标题） |
+| **扩展 id** | `vscode-full-featured-hub.vscode-full-featured-hub` |
+| **底部面板页签** | **HUD** —— 卡片在 VS Code 里一直叫这个名字（命令是 `HUD: …`，输出通道是 `HUD`），列表名只是商城的标题 |
 | **版本** | 2.1.0（= 上游 `hud/package.json` 的版本，有测试盯着这个等式） |
 | **VS Code** | `^1.90.0`，`extensionKind: ["ui"]` |
 | **许可** | MIT（第三方见 `THIRD-PARTY-NOTICES.md`） |
-| **测试** | 本移植 121 项 + 上游 792/548/37 项，全绿 |
+| **测试** | 本移植 122 项 + 上游 792/548/37 项，全绿 |
 
 ---
 
@@ -38,21 +40,22 @@
 ## 1. 安装与首次运行
 
 ```bash
-code --install-extension dsh-hud.vscode-full-featured-hub        # 从商城
-code --install-extension vscode-full-featured-hub-2.1.0.vsix     # 或本地这个 .vsix
+code --install-extension vscode-full-featured-hub.vscode-full-featured-hub   # 从商城
+code --install-extension vscode-full-featured-hub-2.1.0.vsix                # 或本地这个 .vsix
 ```
 
 装完 **重载窗口**（`Ctrl+Shift+P` → `Developer: Reload Window`），点底部面板的 **HUD** 页签。
 
 **大多数面板开箱就有数据** —— 汇率、股市、期货、债市、天气、快递走公开接口，不需要任何配置。要凭据的那几家（DeepSeek key、GitHub token、邮箱授权码、数据库密码、SSH 密码）**都在卡片里直接填，不用改设置文件**。
 
-**改名过一次**：`dsh-hud` → `vscode-full-featured-hub`（跟着上游的叫法）。**扩展 id 变了就是另一个扩展**，装新的之前先卸旧的，否则两个扩展会同时注册那个 HUD 视图：
+**扩展 id 变过两次，每一次都等于"另一个扩展"**：先是 `dsh-hud.dsh-hud`，然后 `dsh-hud.vscode-full-featured-hub`（改包名），最后是现在的 **`vscode-full-featured-hub.vscode-full-featured-hub`**（publisher 与包名对齐 —— 商城只认你注册的那个 publisher ID）。**装新的之前把旧的都卸掉**，否则会有多个扩展同时注册那个 HUD 视图：
 
 ```bash
 code --uninstall-extension dsh-hud.dsh-hud
+code --uninstall-extension dsh-hud.vscode-full-featured-hub
 ```
 
-命令、设置、路由、存储路径**都没跟着改**（还是 `hud.*`、`/dsh-hud/…`、`storages/dsh-hud/…`），所以升级不丢任何配置。
+命令、设置、路由、存储路径**从来没跟着改**（还是 `hud.*`、`/dsh-hud/…`、`storages/dsh-hud/…`），所以升级不丢任何配置。
 
 ---
 
@@ -522,7 +525,12 @@ SQL_HOST=… SQL_USER=… SQL_DATABASE=… SQL_PASSWORD=… node tools/probe-sql
 code --list-extensions --show-versions | Select-String hud
 ```
 
-应该只有 `dsh-hud.vscode-full-featured-hub`。旧的那个卸掉：`code --uninstall-extension dsh-hud.dsh-hud`。
+应该只有 `vscode-full-featured-hub.vscode-full-featured-hub`。旧的卸掉：
+
+```bash
+code --uninstall-extension dsh-hud.dsh-hud
+code --uninstall-extension dsh-hud.vscode-full-featured-hub
+```
 
 ### 面板不刷新 / 刷得太勤
 

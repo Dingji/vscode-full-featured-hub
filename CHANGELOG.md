@@ -5,6 +5,29 @@
 Follows the upstream plugin to **2.1.0** — the version this extension reports is
 the version of the tree it ships.
 
+**The extension is now `vscode-full-featured-hub.vscode-full-featured-hub`, listed as
+`Full Featured Hub`.** The Marketplace ID is `<publisher>.<name>`, so the ID changed
+twice while this release was being prepared: `dsh-hud.dsh-hud` →
+`dsh-hud.vscode-full-featured-hub` (the package was renamed) → the ID above (the
+publisher field had to become the ID that was actually registered, or `vsce publish`
+refuses with a string mismatch). **An ID is an identity**: VS Code treats a new one
+as a different extension, so uninstall the old ones first —
+
+```bash
+code --uninstall-extension dsh-hud.dsh-hud
+code --uninstall-extension dsh-hud.vscode-full-featured-hub
+```
+
+The **listing name** moved for a different reason: `displayName` is the one global
+namespace a publisher does not own, and `HUD` was rejected as already taken
+(`This extension display name is taken`). It is now `Full Featured Hub`, matching
+the package and the repository. **The in-editor labels did not change** — the
+bottom-panel tab, the view name and the output channel are still `HUD`, and the
+commands are still `HUD: …`.
+
+Nothing else moved: every command, setting, route and storage path is still
+`hud.*` / `/dsh-hud/…` / `storages/dsh-hud/…`, so no configuration is lost.
+
 **The rightmost card can now be an SSH terminal instead of the database client.**
 `hud.rightCard` decides which, and the two are ONE slot rather than two cards: the
 card that is not chosen is not registered at all, so there is no half-state where

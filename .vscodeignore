@@ -10,11 +10,14 @@
 #   hud/panels/*/client.js the same fragments, one per panel
 #   hud/tools/             the vendor's test suite
 #   test/, tools/          this port's own suites and build scripts
+#   publish.ps1            a release script for the person publishing, not a user
 .vscode/**
 .gitignore
+.gitattributes
 .git/**
 test/**
 tools/**
+publish.ps1
 hud/tools/**
 hud/client/**
 hud/panels/*/client.js

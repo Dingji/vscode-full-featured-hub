@@ -1,9 +1,9 @@
 {
   "name": "vscode-full-featured-hub",
-  "displayName": "HUD",
+  "displayName": "Full Featured Hub",
   "description": "ONE extensible HUD card in the bottom panel that hosts many panels in a free column grid. Subscription quota (OpenCode GO, DeepSeek, GLM, Kimi, Grok, MiMo, OpenRouter, SiliconFlow, Qwen Token Plan, Command Code, custom JSON endpoints, in-card credential drawer, 30-day usage chart), GitHub activity, to-do list, weather, parcel tracking, stock/bond/futures markets with today's gainers/losers board and a hover intraday K-line chart, and a rightmost card that is either a read-only SQL client (PostgreSQL, MySQL, SQL Server, Oracle, DB2, SQLite) or an interactive SSH terminal with a real PTY. Every panel keeps its own polling, so all of them stay live at the same time.",
   "version": "2.1.0",
-  "publisher": "dsh-hud",
+  "publisher": "vscode-full-featured-hub",
   "license": "MIT",
   "icon": "media/icon.png",
   "repository": {
